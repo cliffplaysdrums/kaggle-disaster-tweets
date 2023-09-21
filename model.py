@@ -20,7 +20,7 @@ def save_model(model, path, id=None):
     """
     if id is not None:
         path, ext = os.path.splitext(path)
-        path = os.path.join(path, id + ext)
+        path = path + "-" + id + ext
 
     torch.save(model.state_dict(), path)
     return path
@@ -36,9 +36,7 @@ def get_default_model(saved_params_path=None, encoder=ROBERTA_LARGE_ENCODER):
     Returns:
         tuple(torchtext.models.roberta.bundler.RobertaBundle, torchtext.transforms.Sequential): Model and transform to prepare input for model
     """
-    classifier_head = RobertaClassificationHead(
-        num_classes=2, input_dim=encoder.encoderConf.embedding_dim
-    )
+    classifier_head = RobertaClassificationHead(num_classes=2, input_dim=encoder.encoderConf.embedding_dim)
     model = encoder.get_model(head=classifier_head)
     text_transform = encoder.transform()
 
@@ -66,7 +64,7 @@ def train_model(train_dataloader, model=None, epochs=100, save_path=None):
         model = get_default_model()
     model.to(DEVICE)
 
-    save_id = datetime.today().isoformat().split(".")[0]
+    save_id = datetime.today().strftime("%Y%m%d-%H%M%S")
     previous_save_path = None
 
     print(f"Training on device {DEVICE}")
@@ -89,17 +87,14 @@ def train_model(train_dataloader, model=None, epochs=100, save_path=None):
             optimizer.zero_grad()
             accumulated_loss = accumulated_loss * 0.9 + 0.1 * loss.item()
             if batch % 10 == 0:
-                print(
-                    f"Batch {batch}, running average loss per batch: {accumulated_loss:.6f}"
-                )
+                print(f"Batch {batch}, running average loss per batch: {accumulated_loss: .6f}")
 
-        print("Finished epoch", current_epoch)
+        print(f"Finished epoch {current_epoch}, running average loss: {accumulated_loss: .6f}")
         if save_path is not None:
-            previous_save_path = save_model(
-                model, path=save_path, id=f"{save_id}-{current_epoch}"
-            )
+            model_saved_at = save_model(model, path=save_path, id=f"{save_id}-epoch{current_epoch}")
             if current_epoch > 0:
                 os.remove(previous_save_path)
+            previous_save_path = model_saved_at
 
     if save_path is not None:
         save_model(model, save_path, id=save_id)
