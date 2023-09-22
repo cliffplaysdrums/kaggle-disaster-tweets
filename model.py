@@ -1,10 +1,7 @@
 import os.path
 import torch
 from datetime import datetime
-from torchtext.models import (
-    RobertaClassificationHead,
-    ROBERTA_LARGE_ENCODER,
-)
+from torchtext.models import RobertaClassificationHead, ROBERTA_LARGE_ENCODER
 
 
 def save_model(model, path, id=None):
