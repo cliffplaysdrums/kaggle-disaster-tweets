@@ -91,7 +91,7 @@ def train_model(train_dataloader, model=None, epochs=100, save_path=None):
 
         print(f"Finished epoch {current_epoch}, running average loss: {accumulated_loss: .6f}")
         if save_path is not None:
-            model_saved_at = save_model(model, path=save_path, id=f"{save_id}-epoch{current_epoch}")
+            model_saved_at = save_model(model, path=save_path, id=f"{save_id}-epoch{current_epoch + 1}")
             if current_epoch > 0:
                 os.remove(previous_save_path)
             previous_save_path = model_saved_at
