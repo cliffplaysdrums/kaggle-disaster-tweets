@@ -35,7 +35,7 @@ def test_model(test_dataloader, model):
         return accuracy
 
 
-def kaggle_submission(model, text_transform, csv_save_path):
+def kaggle_submission(model, text_transform, csv_save_path, batch_size=32):
     """Generate a CSV file of predictions for this Kaggle competition
 
     Args:
@@ -48,7 +48,7 @@ def kaggle_submission(model, text_transform, csv_save_path):
     model.eval()
 
     test_dataloader = data.get_disaster_tweets_test_dataloader(
-        csv_file=os.path.join(".", "data", "test.csv"), text_transform=text_transform
+        csv_file=os.path.join(".", "data", "test.csv"), text_transform=text_transform, batch_size=batch_size
     )
 
     with open(csv_save_path, "w", newline="") as fp:
