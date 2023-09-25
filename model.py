@@ -43,7 +43,7 @@ def get_default_model(saved_params_path=None, encoder=ROBERTA_LARGE_ENCODER):
     return model, text_transform
 
 
-def train_model(train_dataloader, model=None, epochs=100, save_path=None):
+def train_model(train_dataloader, model=None, epochs=10, save_path=None):
     """Train a model.
 
     Args:
@@ -57,6 +57,7 @@ def train_model(train_dataloader, model=None, epochs=100, save_path=None):
         torch.nn.Module: The trained model
     """
     DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
     if model is None:
         model = get_default_model()
     model.to(DEVICE)
